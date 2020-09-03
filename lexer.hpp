@@ -69,6 +69,10 @@ private:
 class FileLexer : public Lexer {
 public:
     explicit FileLexer(std::ifstream& stream);
+
+    ~FileLexer() {
+        stream.close();
+    }
 private:
     std::ifstream& stream;
     bool done;
