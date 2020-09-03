@@ -10,7 +10,7 @@ inline static auto charFromValue(int value, int count = 1) -> std::string {
     return std::string(count, value);
 }
 
-auto prettyPrint(const std::unique_ptr<Statement>& statement, std::string indent, bool isLast = true) -> void {
+auto prettyPrintStatement(const std::unique_ptr<Statement>& statement, std::string indent, bool isLast = true) -> void {
     static std::unordered_map<StatementKind, std::string> kindToText = {
         { StatementKind::Print, "Print" },
         { StatementKind::Input, "Input" },
@@ -45,5 +45,5 @@ auto prettyPrint(const std::unique_ptr<Statement>& statement, std::string indent
 
     auto& last = children.back();
     for (auto& child : children)
-        prettyPrint(child, indent, child == last);
+        prettyPrintStatement(child, indent, child == last);
 }
