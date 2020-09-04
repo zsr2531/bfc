@@ -122,11 +122,16 @@ namespace std {
 class CommandLineParseResult {
 public:
     const std::unordered_set<Flag> flags;
-    const std::unordered_map<Option, const std::string> options;
+    const std::unordered_map<Option, std::string> options;
 
     auto hasFlag(const Flag& flag) -> bool {
         auto search = flags.find(flag);
         return search != flags.end();
+    }
+
+    auto hasOption(const Option& option) -> bool {
+        auto search = options.find(option);
+        return search != options.end();
     }
 
     auto getValue(const Option& option) -> std::string {
@@ -137,7 +142,7 @@ public:
         return search->second;
     }
 
-    explicit CommandLineParseResult(std::unordered_set<Flag> flags, std::unordered_map<Option, const std::string> options)
+    explicit CommandLineParseResult(std::unordered_set<Flag> flags, std::unordered_map<Option, std::string> options)
         : flags(std::move(flags)), options(std::move(options)) { }
 };
 
