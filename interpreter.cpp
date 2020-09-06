@@ -20,11 +20,11 @@ auto Interpreter::visit(const InputStatement& inputStatement) -> void {
 }
 
 auto Interpreter::visit(const ShiftLeftStatement& shiftLeftStatement) -> void {
-    cellPointer--;
+    cellPointer -= shiftLeftStatement.by;
 }
 
 auto Interpreter::visit(const ShiftRightStatement& shiftRightStatement) -> void {
-    cellPointer++;
+    cellPointer += shiftRightStatement.by;
 }
 
 auto Interpreter::visit(const LoopStatement& loopStatement) -> void {
@@ -35,9 +35,9 @@ auto Interpreter::visit(const LoopStatement& loopStatement) -> void {
 }
 
 auto Interpreter::visit(const IncrementStatement& incrementStatement) -> void {
-    cells[cellPointer]++;
+    cells[cellPointer] += incrementStatement.by;
 }
 
 auto Interpreter::visit(const DecrementStatement& decrementStatement) -> void {
-    cells[cellPointer]--;
+    cells[cellPointer] -= decrementStatement.by;
 }
