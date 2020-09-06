@@ -5,13 +5,11 @@
 #include <optional>
 #include <fstream>
 
-using ulong = unsigned long long;
-
 struct TextSpan {
-    ulong begin;
-    ulong end;
+    unsigned long long begin;
+    unsigned long long end;
 
-    TextSpan(ulong begin, ulong end);
+    TextSpan(unsigned long long begin, unsigned long long end);
 };
 
 enum TokenKind {
@@ -52,7 +50,7 @@ class Lexer {
 public:
     auto lex() -> TokenStream;
 protected:
-    ulong position{};
+    unsigned long long position{};
 
     virtual auto supply() -> char = 0;
 };
@@ -68,13 +66,13 @@ private:
 
 class FileLexer : public Lexer {
 public:
-    explicit FileLexer(std::ifstream& stream);
+    explicit FileLexer(std::ifstream stream);
 
     ~FileLexer() {
         stream.close();
     }
 private:
-    std::ifstream& stream;
+    std::ifstream stream;
     bool done;
 
     auto supply() -> char override;

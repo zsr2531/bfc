@@ -1,7 +1,7 @@
 #include "lexer.hpp"
 #include <utility>
 
-TextSpan::TextSpan(const ulong begin, const ulong end) : begin(begin), end(end) { }
+TextSpan::TextSpan(const unsigned long long begin, const unsigned long long end) : begin(begin), end(end) { }
 
 Token::Token(const TextSpan& span, const TokenKind type, const char value)
     : span(span), type(type), value(value) { }
@@ -70,7 +70,7 @@ auto TextLexer::supply() -> char {
     return text[position++];
 }
 
-FileLexer::FileLexer(std::ifstream& stream) : stream(stream) {
+FileLexer::FileLexer(std::ifstream stream) : stream(std::move(stream)) {
     position = 0;
     done = false;
 }
