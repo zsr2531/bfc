@@ -21,19 +21,30 @@ auto Parser::single() -> std::unique_ptr<Statement> {
     auto token = tokenStream.next();
     auto type = token.type;
 
+    if (type == TokenKind::LeftAngledBracket || type == TokenKind::RightAngledBracket || type == TokenKind::Plus || type == TokenKind::Minus) {
+        long long by = 1;
+        while (tokenStream.lookahead().type == type) {
+            tokenStream.next();
+            by++;
+        }
+
+        switch (type) {
+            case TokenKind::LeftAngledBracket:
+                return std::make_unique<ShiftLeftStatement>(by);
+            case TokenKind::RightAngledBracket:
+                return std::make_unique<ShiftRightStatement>(by);
+            case TokenKind::Plus:
+                return std::make_unique<IncrementStatement>(by);
+            case TokenKind::Minus:
+                return std::make_unique<DecrementStatement>(by);
+        }
+    }
+
     switch (type) {
         case TokenKind::Dot:
             return std::make_unique<PrintStatement>();
         case TokenKind::Comma:
             return std::make_unique<InputStatement>();
-        case TokenKind::LeftAngledBracket:
-            return std::make_unique<ShiftLeftStatement>();
-        case TokenKind::RightAngledBracket:
-            return std::make_unique<ShiftRightStatement>();
-        case TokenKind::Plus:
-            return std::make_unique<IncrementStatement>();
-        case TokenKind::Minus:
-            return std::make_unique<DecrementStatement>();
         default: throw std::logic_error("Bad input."); // TODO: Improve message
     }
 }
