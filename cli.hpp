@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <memory>
+#include <string>
 
 class Switch {
 public:
@@ -54,51 +55,46 @@ public:
         return !(lhs < rhs);
     }
 
-    virtual auto identifiers() const -> std::vector<const char*> = 0;
-    virtual auto description() const -> const char* = 0;
+    virtual auto identifiers() const -> std::vector<std::string> = 0;
     virtual auto hasValue() const -> bool = 0;
 };
 
 class Flag : public Switch {
 public:
-    auto identifiers() const -> std::vector<const char*> override { return ids; }
-    auto description() const -> const char* override { return desc; }
+    auto identifiers() const -> std::vector<std::string> override { return ids; }
     auto hasValue() const -> bool override { return false; }
 
     template<typename ...T>
-    explicit Flag(const char* desc, const T* ...identifier) : desc(desc), ids { identifier... } {
+    explicit Flag(const T ...identifier) : ids { identifier... } {
         static_assert(sizeof...(T) >= 1, "At least one identifier must be provided");
     }
 private:
-    const char* desc;
-    const std::vector<const char*> ids;
+    const std::vector<std::string> ids;
 };
 
 class Option : public Switch {
 public:
     const char* defaultValue;
 
-    auto identifiers() const -> std::vector<const char*> override { return ids; }
-    auto description() const -> const char* override { return desc; }
-    auto hasValue() const -> bool override { return false; }
+    auto identifiers() const -> std::vector<std::string> override { return ids; }
+    auto hasValue() const -> bool override { return true; }
 
     template<typename ...T>
-    explicit Option(const char* desc, const char* defaultValue, const T* ...identifier)
-        : desc(desc), defaultValue(defaultValue), ids { identifier... } {
+    explicit Option(const char* defaultValue, const T ...identifier)
+        : defaultValue(defaultValue), ids { identifier... } {
         static_assert(sizeof...(T) >= 1, "At least one identifier must be provided");
     }
 private:
-    const char* desc;
-    const std::vector<const char*> ids;
+    const std::vector<std::string> ids;
 };
 
 namespace std {
     template<> struct hash<Switch> {
         std::size_t operator ()(const Switch& s) const noexcept {
-            std::size_t hash = 0;
+            std::size_t hash = 1337;
 
-            for (auto id : s.identifiers()) {
-                auto h = std::hash<const char*>{}(id);
+            for (const std::string& id : s.identifiers()) {
+                auto h = std::hash<std::string>{}(id);
                 hash = (((h * 97) << 2u) * hash) % 117649312;
             }
 
@@ -148,11 +144,11 @@ public:
 
 class CommandLineParser {
 public:
-    const std::unordered_map<const char*, Switch*>& switches;
+    const std::unordered_map<std::string, Switch*>& switches;
 
     auto parse() -> CommandLineParseResult;
 
-    explicit CommandLineParser(const std::unordered_map<const char*, Switch*>& switches, int count, char** args)
+    explicit CommandLineParser(const std::unordered_map<std::string, Switch*>& switches, int count, char** args)
         : switches(switches), count(count), args(args) { }
 private:
     const int count;

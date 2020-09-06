@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include "cli.hpp"
 
 auto CommandLineParser::parse() -> CommandLineParseResult {
